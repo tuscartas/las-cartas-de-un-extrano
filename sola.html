@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoy Aquí</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body, html {
+            min-height: 100%;
+            background-color: #1a0633;
+            background-image: url('fondosola.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .contenedor-lectura {
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, 
+                rgba(0,0,0,0.6) 0%, 
+                rgba(0,0,0,0.3) 100%);
+            display: flex;
+            align-items: center;
+            padding: 40px 6%;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 768px) {
+            .contenedor-lectura {
+                background: linear-gradient(to right, 
+                    rgba(0,0,0,0.7) 0%, 
+                    rgba(0,0,0,0.2) 50%, 
+                    transparent 100%);
+            }
+        }
+
+        .texto-carta {
+            max-width: 550px;
+            font-family: 'Caveat', cursive;
+            color: #ffffff; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        h2 { font-size: 3rem; margin-bottom: 15px; color: #ff3e3e; line-height: 1.1; }
+        .mensaje-principal { font-size: 1.5rem; line-height: 1.3; }
+        p { margin-bottom: 18px; }
+        .resaltado { color: #ffeb3b; font-weight: 700; }
+
+        .botones-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+
+        .boton {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 12px 22px;
+            border-radius: 50px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ESTILO DEL BOTÓN VOLVER (FIJO A LA DERECHA DE LA PÁGINA) */
+        .boton-volver { 
+            background: #ec1568; 
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 90; /* Por debajo del modal (100) pero encima del fondo */
+        }
+        
+        .boton-juego { background: #311b92; }
+        .boton-dibujo { background: #009688; }
+        .boton:hover { transform: translateY(-3px); opacity: 0.9; }
+
+        /* --- ESTILOS MODALES --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .modal-contenido {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Botón cerrar dentro de los modales (sin afectar el botón fijo de la página) */
+        .boton-cerrar-modal {
+            background: #ec1568;
+            margin-top: 20px; 
+            width: 100%; 
+            justify-content: center;
+        }
+
+        /* --- ESTILOS SOPA DE LETRAS --- */
+        #sopa-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 3px;
+            margin: 15px 0;
+        }
+
+        .celda {
+            aspect-ratio: 1/1;
+            background: #f0f0f0;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; border-radius: 3px; cursor: pointer;
+            font-size: 0.7rem; user-select: none;
+            color: #333;
+        }
+
+        .celda.selected { background: #ffeb3b; }
+        .celda.encontrada { background: #4CAF50; color: white; }
+
+        .lista-palabras { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+        .palabra-item { background: #eee; padding: 3px 7px; border-radius: 8px; font-size: 0.6rem; font-weight: bold; color: #555; }
+        .palabra-item.tachada { text-decoration: line-through; background: #4CAF50; color: white; opacity: 0.6; }
+
+        /* --- ESTILOS DIBUJO --- */
+        #canvas-dibujo {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: crosshair;
+            margin: 10px 0;
+            touch-action: none;
+            width: 100%; 
+            height: auto;
+        }
+
+        .controles-dibujo { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            /* Ajuste del botón en móviles para que no estorbe tanto */
+            .boton-volver {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-lectura">
+        <div class="texto-carta">
+            <h2>Hola…</h2>
+            <div class="mensaje-principal">
+                <p>Te escucho.</p>
+                
+                <p>Sé que hay días en los que la soledad pesa más de lo normal. Días donde, aunque estés rodeada de personas, sientes que nadie realmente nota todo lo que pasa por tu cabeza. Y justo por eso quería pasar por aquí: para recordarte que no estás tan sola como a veces crees.</p>
+                
+                <p>Cuéntame, ¿cómo estuvo tu día hoy?<br>
+                ¿Qué hiciste en clase?<br>
+                ¿Te reíste en el descanso o fue uno de esos días largos donde solo querías llegar a casa?<br>
+                ¿Cómo estuvo la comida?<br>
+                ¿Escuchaste alguna canción que te gustara?<br>
+                ¿Pasó algo que te hizo feliz aunque fuera por un ratito?</p>
+                
+                <p>Pero más allá de todo eso… ¿cómo estás tú realmente?</p>
+                
+                <p>Porque muchas veces respondes “bien” aunque tengas mil cosas guardadas. Y no deberías sentir que tienes que cargar con todo en silencio.</p>
+                
+                <p>Si quieres hablar, desahogarte o simplemente sentir que alguien te escucha de verdad, aquí tienes un espacio seguro. Y si no quieres hablar también está bien. Podemos simplemente existir un rato: pintar, caminar, distraernos viendo algo tonto o quedarnos en silencio sin que eso se sientas incómodo.</p>
+                
+                <p>Quiero que recuerdes algo importante: tu compañía vale muchísimo. Aunque a veces tu mente te haga sentir invisible o insuficiente, hay personas que genuinamente agradecen que existas, que sonrías, que aparezcas en sus días, incluso cuando tú no lo notas, porque no sabes lo que haría yo por verte tan solo una vez más, solo una (como la canción de Morat).</p>
+                
+                <p>Y hablando de todo lo que has vivido… admiro muchísimo la forma en que enfrentaste lo de tu lesión. Sé que hubo momentos donde te sentiste limitada, frustrada o incluso rota por dentro. Sé que dolió sentirte débil, sentir que no podías hacer las cosas como antes o escuchar comentarios de personas que jamás entendieron realmente lo que estabas viviendo.</p>
+                
+                <p>Pero aun así seguiste adelante. Y eso requiere muchísimo valor.</p>
+                
+                <p>Porque ser fuerte no significa nunca caer. Ser fuerte significa levantarte incluso después de sentirte derrotada. Significa seguir intentando aunque tengas miedo. Significa permitirte llorar y aun así continuar.</p>
+                
+                <p>No tienes que demostrarle nada a nadie. No tienes que fingir que todo está perfecto. No tienes que convertirte en alguien “más fuerte” para merecer apoyo, cariño o comprensión.</p>
+                
+                <p>A veces está bien sentirse cansada. A veces está bien admitir que necesitas a alguien.</p>
+                
+                <p>Y cuando vuelvas a sentir ese vacío raro, esa sensación de soledad que aparece de repente aunque todo parezca normal, quiero que recuerdes esto:siempre habrá alguien dispuesto a escucharte, a quedarse y a recordarte lo valiosa que eres incluso en tus días más difíciles.</p>
+                
+                <p>No estás sola en esto. Nunca lo has estado del todo.</p>
+                
+                <p>Y aunque ahora mismo quizás no lo notes, tienes una luz muy bonita dentro de ti. Una de esas luces que, incluso cuando se sienten apagadas, siguen siendo capaces de darle calidez a otras personas.</p>
+                
+                <p>Así que, por favor, sé un poquito más amable contigo. Abrázate más. Descansa más. Permítete sentir.</p>
+                
+                <p>Y cuando necesites soltar todo eso que llevas guardado, aquí siempre habrá un lugar para ti.</p>
+            </div>
+            
+            <div class="botones-container">
+                <button onclick="abrirModal('modalJuego')" class="boton boton-juego">SOPA DE LETRAS 🧩</button>
+                <button onclick="abrirModal('modalDibujo')" class="boton boton-dibujo">DIBUJA ALGO 🎨</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="boton boton-volver">← Volver a las cartas</a>
+
+    <!-- MODAL JUEGO -->
+    <div id="modalJuego" class="modal">
+        <div class="modal-contenido">
+            <h3 style="color: #311b92;">Para una campeona</h3>
+            <p style="font-size: 0.75rem; margin-bottom: 10px;">Toca la primera y última letra:</p>
+            <div id="sopa-grid"></div>
+            <div class="lista-palabras" id="lista-palabras"></div>
+            <button onclick="cerrarModal('modalJuego')" class="boton boton-cerrar-modal">CERRAR</button>
+        </div>
+    </div>
+
+    <!-- MODAL DIBUJO -->
+    <div id="modalDibujo" class="modal">
+        <div class="modal-contenido">
+            <h3 style="color: #009688;">Tu Espacio Creativo</h3>
+            <canvas id="canvas-dibujo" width="400" height="300"></canvas>
+            <div class="controles-dibujo">
+                <input type="color" id="color-picker" value="#311b92" style="width:40px; height:40px;">
+                <button onclick="limpiarLienzo()" class="boton" style="background: #757575;">BORRAR</button>
+            </div>
+            <button onclick="cerrarModal('modalDibujo')" class="boton boton-cerrar-modal">CERRAR</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(id) { 
+            document.getElementById(id).style.display = 'flex';
+            if(id === 'modalDibujo') resizeCanvas();
+        }
+        function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- SOPA DE LETRAS ---
+        const palabrasObj = [
+            {p: "RESILIENCIA", found: false}, {p: "BALONCESTO", found: false},
+            {p: "VIOLIN", found: false}, {p: "FUERZA", found: false},
+            {p: "VALIENTE", found: false}, {p: "PASION", found: false},
+            {p: "ESENCIA", found: false}, {p: "TRIPLE", found: false},
+            {p: "AMOR", found: false}, {p: "PACIENCIA", found: false},
+            {p: "ABRAZO", found: false}, {p: "APOYO", found: false}
+        ];
+        const SIZE = 12;
+        let tablero = Array(SIZE * SIZE).fill('');
+        let firstSel = null;
+
+        function generarSopa() {
+            const gridElement = document.getElementById('sopa-grid');
+            const letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+            palabrasObj.forEach((obj) => {
+                let colocada = false;
+                while (!colocada) {
+                    let dir = Math.random() > 0.5 ? {x:1, y:0} : {x:0, y:1};
+                    let fila = Math.floor(Math.random() * SIZE), col = Math.floor(Math.random() * SIZE);
+                    if (fila + dir.y*obj.p.length <= SIZE && col + dir.x*obj.p.length <= SIZE) {
+                        let ok = true;
+                        for(let i=0; i<obj.p.length; i++) if (tablero[(fila + i*dir.y)*SIZE + (col + i*dir.x)] !== '') ok = false;
+                        if (ok) {
+                            for(let i=0; i<obj.p.length; i++) tablero[(fila + i*dir.y)*SIZE + (col + i*dir.x)] = obj.p[i];
+                            colocada = true;
+                        }
+                    }
+                }
+            });
+            tablero.forEach((l, i) => {
+                const div = document.createElement('div');
+                div.className = 'celda';
+                div.textContent = l || letras[Math.floor(Math.random() * letras.length)];
+                div.onclick = () => {
+                    if (firstSel === null) { firstSel = i; div.classList.add('selected'); }
+                    else { checkWord(firstSel, i); document.querySelectorAll('.celda')[firstSel].classList.remove('selected'); firstSel = null; }
+                };
+                gridElement.appendChild(div);
+            });
+            renderLista();
+        }
+
+        function renderLista() {
+            const lista = document.getElementById('lista-palabras');
+            lista.innerHTML = '';
+            palabrasObj.forEach(obj => {
+                const s = document.createElement('span');
+                s.className = 'palabra-item' + (obj.found ? ' tachada' : '');
+                s.textContent = obj.p;
+                lista.appendChild(s);
+            });
+        }
+
+        function checkWord(start, end) {
+            let sF = Math.floor(start/SIZE), sC = start%SIZE, eF = Math.floor(end/SIZE), eC = end%SIZE;
+            let word = "", indices = [];
+            if (sF === eF) { 
+                let step = sC < eC ? 1 : -1;
+                for(let i=sC; i !== eC + step; i += step) { indices.push(sF * SIZE + i); word += tablero[sF * SIZE + i]; }
+            } else if (sC === eC) {
+                let step = sF < eF ? 1 : -1;
+                for(let i=sF; i !== eF + step; i += step) { indices.push(i * SIZE + sC); word += tablero[i * SIZE + sC]; }
+            }
+            const match = palabrasObj.find(obj => obj.p === word && !obj.found);
+            if (match) {
+                match.found = true;
+                indices.forEach(i => document.querySelectorAll('.celda')[i].classList.add('encontrada'));
+                renderLista();
+            }
+        }
+
+        // --- DIBUJO ---
+        const canvas = document.getElementById('canvas-dibujo');
+        const ctx = canvas.getContext('2d');
+        let dibujando = false;
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth - 40;
+            canvas.height = 300;
+        }
+
+        function limpiarLienzo() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+        function startDraw(e) { dibujando = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); }
+        function moveDraw(e) {
+            if (!dibujando) return;
+            const p = getPos(e);
+            ctx.lineWidth = 3; ctx.lineCap = 'round';
+            ctx.strokeStyle = document.getElementById('color-picker').value;
+            ctx.lineTo(p.x, p.y); ctx.stroke();
+        }
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e); });
+        canvas.addEventListener('mousemove', moveDraw); canvas.addEventListener('touchmove', (e) => { e.preventDefault(); moveDraw(e); });
+        window.addEventListener('mouseup', () => dibujando = false); window.addEventListener('touchend', () => dibujando = false);
+
+        generarSopa();
+    </script>
+</body>
+</html>

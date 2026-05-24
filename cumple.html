@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Danna</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body, html {
+            height: 100%; width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            background-color: #f3e5f5;
+            background-image: url('prueba.jpg'); 
+            background-size: cover;
+            background-position: center center;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .titulo-superior {
+            position: absolute; top: 15%; font-size: 2.2rem;
+            color: #6a1b9a; text-align: center;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.9); z-index: 10;
+            width: 90%;
+        }
+
+        /* --- GLOBO PRINCIPAL --- */
+        .contenedor-globo {
+            position: relative; cursor: pointer; z-index: 20;
+            animation: flotarSutil 3s ease-in-out infinite;
+        }
+
+        .globo-magico {
+            width: 150px; height: 180px;
+            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: relative;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .nudo-globo {
+            position: absolute; bottom: -5px; left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent; border-right: 10px solid transparent;
+            border-bottom: 15px solid #b71c1c;
+        }
+
+        .etiqueta-globo {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white; font-size: 0.8rem; font-weight: bold;
+            text-align: center; pointer-events: none;
+        }
+
+        @keyframes flotarSutil {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .explotar { animation: pop 0.2s forwards; }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        /* --- GLOBOS DE FONDO --- */
+        .globo-decorativo {
+            position: absolute; bottom: -100px; width: 35px; height: 48px;
+            border-radius: 50%; opacity: 0.6; z-index: 5;
+            animation: subir 7s linear infinite;
+        }
+
+        @keyframes subir {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-120vh) rotate(360deg); }
+        }
+
+        /* --- CARTA --- */
+        .carta {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90%; max-width: 650px; z-index: 100;
+            opacity: 0; font-family: 'Caveat', cursive;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #fdf5e6; padding: 35px; border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8); max-height: 85vh;
+            overflow-y: auto; color: #2c1810;
+        }
+
+        .carta.mostrar { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .carta h2 { font-size: 2.8rem; color: #6a1b9a; margin-bottom: 15px; text-align: center; }
+        .carta p { font-size: 1.4rem; line-height: 1.4; margin-bottom: 18px; text-align: justify; }
+        .carta .pdta { font-size: 1.2rem; color: #5d4037; border-top: 1px dashed #c09f6f; pt: 10px; font-style: italic; }
+
+        .capa-oscurecimiento {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0); z-index: 40;
+            transition: background 0.6s; pointer-events: none;
+        }
+        .capa-oscurecimiento.visible { background: rgba(0, 0, 0, 0.75); pointer-events: auto; }
+
+        /* --- CONTROLES --- */
+        .contenedor-volumen {
+            position: fixed; bottom: 20px; left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px; border-radius: 30px;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 120; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .contenedor-volumen label { font-size: 0.7rem; color: #6a1b9a; font-weight: bold; }
+        input[type=range] { cursor: pointer; accent-color: #6a1b9a; width: 80px; }
+
+        .btn-flotante-index {
+            position: fixed; bottom: 20px; right: 20px; padding: 12px 20px;
+            background-color: #6a1b9a; color: white; text-decoration: none;
+            border-radius: 50px; font-weight: bold; z-index: 110; font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            .carta { padding: 20px; }
+            .carta h2 { font-size: 2.2rem; }
+            .carta p { font-size: 1.2rem; }
+            .titulo-superior { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="musicaFondo" loop>
+        <source src="Cumple.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="contenedor-volumen">
+        <label>VOL 🔊</label>
+        <input type="range" id="volumenSlider" min="0" max="1" step="0.1" value="0.4">
+    </div>
+
+    <div class="titulo-superior" id="instruccion">¡Revienta el globo, Danna!</div>
+
+    <div class="contenedor-globo" id="globoPrincipal">
+        <div class="globo-magico">
+            <div class="etiqueta-globo">CLIC AQUÍ</div>
+            <div class="nudo-globo"></div>
+        </div>
+    </div>
+
+    <div class="capa-oscurecimiento" id="overlay"></div>
+    
+    <div class="carta" id="miCarta">
+        <h2>¡Holaaa!</h2>
+        <p>Primero que todo: feliz cumpleaños. Ya son 17 años… y aunque pueda parecer sólo un número más, en realidad representa todo lo que has vivido, superado y aprendido durante este tiempo. Llegar hasta aquí no ha sido casualidad; has tenido días buenos, otros no tanto, momentos que seguramente quisiste repetir y otros que preferirías olvidar, pero aun así seguiste adelante. Y eso ya demuestra lo increíble que eres.</p>
+        <p>Hoy es uno de esos días en los que vale la pena detenerse un momento y mirar todo lo que has crecido. No solo en edad, sino también en experiencias, en sueños, en la forma en que ves la vida y en la manera tan linda en la compartes con las personas que te rodean y las iluminas.</p>
+        <p>Tal vez este no sea el regalo más costoso del mundo, pero sí uno hecho con intención: esta carta y la página web existen para recordarte lo especial que es este día y lo importante que eres para mi.</p>
+        <p>Ojalá disfrutes muchísimo este cumpleaños. Que bailes hasta cansarte en esa chiva si es que pasa, que te rías fuerte, que tomes muchas fotos, que disfrutes cada momento y que puedas compartir con todas las personas que quieres. Porque si hay algo que realmente te caracteriza, es la felicidad que te da pasar tiempo de calidad con quienes te rodean.</p>
+        <p>También es imposible no pensar en que ya solo falta un año para los 18. Un año para esa etapa que tantas veces imaginaste: más libertad, más decisiones, nuevos caminos y nuevas experiencias. Y aunque crecer da emoción, también trae retos, pero estoy seguro de que tienes todo para enfrentarlos y vivirlos a tu manera.</p>
+        <p>Deseo de corazón que este nuevo año de vida venga lleno de cosas bonitas para ti. Que cumplas metas, que lleguen oportunidades increíbles, que nunca te falten motivos para sonreír y que siempre encuentren personas sinceras a tu lado. Que sigas descubriendo lo que te hace feliz y que nunca pierdas esa esencia tan tuya.</p>
+        <p>Y sobre todo, espero que hoy, cuando termine el día, puedas acostarte sintiendo que realmente valió la pena. Que te sentiste querida, que disfrutaste cada instante y que este cumpleaños se convirtió en uno de esos recuerdos que se guardan para siempre.</p>
+        <p style="text-align: center; font-weight: bold; font-size: 1.8rem;">Felices 17.</p>
+        <p><b>pdta.</b> Si el día no fue lo que querías recuerda que hay una persona en el mundo que piensa que tu cumpleaños es de los eventos más importantes del año e hizo esta pagina solo para sacarte así sea una mínima sonrisa. además aunque menciono tu cumpleaños número 17 esta página va a ser siempre tuya, puedes volver cada año. mis deseos serán siempre los mismos, feliz cumpleaños para toda tu vida…</p>
+        <p style="text-align: center; font-size: 0.9rem; color: #888; font-family: 'Montserrat';">(Toca la carta para cerrar)</p>
+    </div>
+
+    <a href="index.html" class="btn-flotante-index">← Volver a las cartas</a>
+
+    <script>
+        const globo = document.getElementById('globoPrincipal');
+        const carta = document.getElementById('miCarta');
+        const overlay = document.getElementById('overlay');
+        const musica = document.getElementById('musicaFondo');
+        const instruccion = document.getElementById('instruccion');
+        const volumenSlider = document.getElementById('volumenSlider');
+
+        musica.volume = volumenSlider.value;
+        volumenSlider.addEventListener('input', (e) => { musica.volume = e.target.value; });
+
+        function crearGloboDecorativo() {
+            const colores = ['#ff8a80', '#ffd180', '#ffff8d', '#ccff90', '#80d8ff', '#b388ff'];
+            const g = document.createElement('div');
+            g.className = 'globo-decorativo';
+            g.style.left = Math.random() * 100 + 'vw';
+            g.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+            g.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            document.body.appendChild(g);
+            setTimeout(() => g.remove(), 8000);
+        }
+
+        function lanzarConfetiLateral() {
+            const end = Date.now() + (20 * 1000); 
+            const colors = ['#ff0000', '#6a1b9a', '#ffd700', '#ffffff'];
+
+            (function frame() {
+                confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+                confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+
+        globo.addEventListener('click', () => {
+            globo.classList.add('explotar');
+            instruccion.style.display = 'none';
+            confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
+            lanzarConfetiLateral();
+            setInterval(crearGloboDecorativo, 600);
+            musica.play().catch(e => console.log("Audio en espera"));
+            setTimeout(() => {
+                globo.style.display = 'none';
+                carta.classList.add('mostrar');
+                overlay.classList.add('visible');
+            }, 300);
+        });
+
+        function cerrar() {
+            carta.classList.remove('mostrar');
+            overlay.classList.remove('visible');
+        }
+
+        carta.addEventListener('click', cerrar);
+        overlay.addEventListener('click', cerrar);
+    </script>
+</body>
+</html>

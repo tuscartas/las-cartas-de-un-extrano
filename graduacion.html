@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Felicidades Graduada! 🎓</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('Fondo-Graduacion.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end; 
+            align-items: center;
+            height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1); 
+            z-index: 0;
+        }
+
+        #start-screen {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-principal {
+            padding: 15px 40px;
+            font-size: 18px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn-principal:hover {
+            transform: scale(1.05);
+        }
+
+        /* BOTÓN VOLVER */
+        .btn-volver {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .btn-volver:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .cap {
+            position: absolute;
+            bottom: -60px;
+            font-size: 50px;
+            z-index: 10;
+            animation: throw 3.5s ease-out forwards;
+        }
+
+        @keyframes throw {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-90vh) rotate(180deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        #carta-container {
+            display: none;
+            max-width: 400px;
+            background: transparent;
+            padding: 40px;
+            margin-right: 5%;
+            animation: slideLeft 2s ease-out forwards;
+            z-index: 5;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: right;
+        }
+
+        #carta-container p {
+            color: #ffffff;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 
+                         1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        h2 { 
+            color: #ffffff; 
+            font-size: 30px; 
+            margin-bottom: 25px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 1);
+        }
+
+        .firma { 
+            margin-top: 30px; 
+            font-weight: bold; 
+            font-size: 20px; 
+            color: #ffffff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        /* --- CONTROL DE VOLUMEN (AHORA A LA IZQUIERDA) --- */
+        #volume-control {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 5%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 20;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 2s ease;
+        }
+
+        #volume-control label {
+            color: white;
+            font-size: 18px;
+        }
+
+        #volume-slider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideLeft {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        #carta-container::-webkit-scrollbar {
+            width: 0px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <h3>¡Hola, Danna! 🎓</h3>
+        <p>Prepara el volumen y presiona el botón</p>
+        <button class="btn-principal" onclick="comenzar()">Abrir Carta</button>
+    </div>
+
+    <audio id="musica" loop>
+        <source src="Fondo.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="carta-container">
+        <h2>¡Felicidades, graduada! 🎓✨</h2>
+        
+        <p>¡Holaaaaa!<br>
+        Bueno… oficialmente lo lograste. Sí, así como lo lees: ya te graduaste. Y aunque quizás todavía no dimensionas todo lo que significa este momento, quiero que te detengas un segundo y entiendas algo muy importante:</p>
+        
+        <p>Terminaste una de las etapas más importantes de tu vida.</p>
+        
+        <p>Después de tantos días pesados, trabajos interminables, estrés, exposiciones, proyectos, trasnochadas, nervios por el ICFES y momentos donde sentías que no podías más… aquí estás. Con un diploma que representa muchísimo más que solo notas o años de estudio. Representa todo tu esfuerzo, tu disciplina y todas las veces que seguiste adelante incluso cuando estabas cansada.</p>
+        
+        <p>Y honestamente… qué orgullo tan grande.</p>
+        
+        <p>Tal vez no pude estar ahí viendo el momento exacto en que recibiste tu diploma, pero aun así no imaginas lo feliz que me hace saber que llegaste hasta este punto. Porque vi —aunque quizás tú no lo notes— todo lo que tuviste que pasar para conseguirlo.</p>
+        
+        <p>Vi tus preocupaciones antes de entregar proyectos.<br>
+        Tus noches sin dormir intentando terminar todo.<br>
+        Tus momentos de estrés.<br>
+        Tus dudas.<br>
+        Tus lloradas silenciosas cuando sentías demasiada presión.<br>
+        Y también vi cómo, aun con todo eso encima, nunca dejaste de intentarlo.</p>
+        
+        <p>Por eso este logro vale tanto.</p>
+        
+        <p>Porque no fue suerte.<br>
+        Fue constancia.<br>
+        Fue valentía.<br>
+        Fue seguir adelante incluso en los días donde querías rendirte.</p>
+        
+        <p>Y mírate ahora… graduada.</p>
+        
+        <p>Qué increíble suena eso, ¿no?</p>
+        
+        <p>Espero de verdad que disfrutes muchísimo tu viaje de grado. Que te rías hasta que te duela el estómago, que tomes demasiadas fotos, que bailes, que hagas locuras con tus amigos y que guardes recuerdos que algún día te hagan sonreír cuando los vuelvas a pensar.</p>
+        
+        <p>Porque esos momentos quedan para siempre.</p>
+        
+        <p>Y aunque ahora quizás tengas miedo por lo que viene después —la universidad, el futuro, las decisiones, crecer— quiero que recuerdes algo: ya demostraste que eres capaz de muchísimo más de lo que imaginas.</p>
+        
+        <p>Todo eso que antes parecía imposible… lo terminaste logrando.</p>
+        
+        <p>Así que nunca vuelvas a subestimar tu fuerza.</p>
+        
+        <p>Este apenas es el comienzo de una nueva etapa. Una donde vas a descubrir muchas cosas sobre ti misma, donde seguramente tendrás nuevos retos, nuevas metas y también nuevos sueños. Y sinceramente, no tengo dudas de que vas a lograr cosas increíbles.</p>
+        
+        <p>Porque si algo quedó claro después de todo este tiempo, es que cuando realmente te propones algo, eres imparable.</p>
+        
+        <p>Así que hoy celebra muchísimo.<br>
+        Celebra todo lo que creciste.<br>
+        Todo lo que aprendiste.<br>
+        Todo lo que sobreviviste.<br>
+        Y todo lo que viene ahora.</p>
+        
+        <div class="firma">Orgull@ siempre de ti.<br>Siempre. ✨</div>
+        
+        <a href="index.html" class="btn-volver">← Volver a las cartas</a>
+    </div>
+
+    <!-- Barra de Volumen (Lado Izquierdo) -->
+    <div id="volume-control">
+        <label for="volume-slider">🔊</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.6">
+    </div>
+
+    <script>
+        const audio = document.getElementById('musica');
+        const slider = document.getElementById('volume-slider');
+
+        function comenzar() {
+            document.getElementById('start-screen').style.display = 'none';
+            audio.volume = slider.value;
+            audio.play().catch(e => console.log("Audio no cargado"));
+
+            // Mostrar la barra de volumen junto con la carta
+            document.getElementById('volume-control').style.display = 'flex';
+
+            for (let i = 0; i < 35; i++) {
+                setTimeout(() => {
+                    const cap = document.createElement('div');
+                    cap.className = 'cap';
+                    cap.innerText = '🎓';
+                    cap.style.left = Math.random() * 90 + 'vw';
+                    cap.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+                    document.body.appendChild(cap);
+                    setTimeout(() => cap.remove(), 4000);
+                }, i * 150);
+            }
+
+            setTimeout(() => {
+                const carta = document.getElementById('carta-container');
+                carta.style.display = 'block';
+            }, 3500);
+        }
+
+        // Listener para cambiar el volumen en tiempo real
+        slider.addEventListener('input', (e) => {
+            audio.volume = e.target.value;
+        });
+    </script>
+</body>
+</html>

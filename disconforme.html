@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuando dudes de tu fuerza ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #000;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- PANTALLA DE ENTRADA O BIENVENIDA --- */
+        .pantalla-entrada {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .btn-entrar {
+            background: transparent;
+            border: 2px solid #22e6e3;
+            color: #fff;
+            padding: 15px 35px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(34, 230, 227, 0.2);
+        }
+
+        .btn-entrar:hover {
+            background: #22e6e3;
+            color: #000;
+            box-shadow: 0 0 25px rgba(34, 230, 227, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* BOTÓN VOLVER - POSICIONADO A LA DERECHA ABAJO */
+        .btn-volver {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            opacity: 0.7;
+        }
+
+        .btn-volver:hover {
+            opacity: 1;
+            transform: translateX(5px);
+            color: #22e6e3;
+        }
+
+        .btn-volver span {
+            font-size: 1.2rem;
+        }
+
+        /* Fondo Inmersivo */
+        .full-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('Fondo-Fuerza.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            transform: scale(1.1);
+        }
+
+        /* Contenedor Integrado */
+        .content-wrapper {
+            max-width: 800px;
+            width: 90%;
+            padding: 80px 20px;
+            text-align: center;
+            animation: slideUp 2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            font-weight: 300;
+            margin-bottom: 50px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .texto-carta {
+            font-size: 1.1rem;
+            line-height: 2;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+        }
+
+        .highlight {
+            color: #22e6e3;
+            font-weight: 500;
+        }
+
+        /* Cita Estética */
+        .aesthetic-quote {
+            margin: 60px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 2px;
+            border-left: 2px solid #09177f;
+            border-right: 2px solid #09177f;
+            position: relative;
+            max-width: 600px;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: #22e6e3;
+            font-style: italic;
+        }
+
+        .firma {
+            margin-top: 40px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .divider {
+            width: 50px;
+            height: 2px;
+            background: #09177f;
+            margin: 20px auto;
+        }
+
+        /* --- CONTROLES DE AUDIO FLOTANTES --- */
+        .audio-container {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s ease;
+        }
+
+        .audio-container:hover {
+            border-color: #22e6e3;
+            box-shadow: 0 0 10px rgba(34, 230, 227, 0.2);
+        }
+
+        .btn-audio {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .btn-audio:hover {
+            color: #22e6e3;
+            transform: scale(1.1);
+        }
+
+        .control-volumen {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .control-volumen::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #22e6e3;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .control-volumen::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: #22e6e3;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 600px) {
+            .audio-container {
+                bottom: 20px;
+                left: 20px;
+                padding: 8px 12px;
+            }
+            .control-volumen {
+                width: 60px;
+            }
+            .btn-volver {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla previa obligatoria para activar la música -->
+    <div class="pantalla-entrada" id="pantalla-entrada">
+        <button class="btn-entrar" onclick="comenzarExperiencia()">Entrar con música ✨</button>
+    </div>
+
+    <!-- EL BOTÓN SE MOVIÓ ABAJO A LA DERECHA Y SE CAMBIÓ LA FLECHA -->
+    <a href="index.html" class="btn-volver">
+      Volver a las cartas <span>→</span>
+    </a>
+
+    <div class="full-background"></div>
+
+    <!-- Elemento de audio oculto -->
+    <audio id="musica-fondo" loop src="Fon.mp3"></audio>
+
+    <!-- Panel de control flotante -->
+    <div class="audio-container">
+        <button class="btn-audio" id="btn-play-pause" onclick="toggleAudio()">
+            <span id="icono-audio">⏸</span>
+        </button>
+        <input type="range" class="control-volumen" id="slider-volumen" min="0" max="1" step="0.05" value="0.5" oninput="cambiarVolumen(this.value)">
+    </div>
+
+    <div class="content-wrapper">
+        <h2>✨ Vamos a por todo</h2>
+        
+        <div class="texto-carta">
+            <p>Hola.</p>
+            <br>
+            <p>Si estás leyendo esto, probablemente hoy sea uno de esos días en los que las dudas pesan más de lo normal. Uno de esos días donde todo cuesta un poquito más, donde sientes que no avanzas lo suficiente o donde tu propia mente empieza a cuestionar todo lo que has logrado.</p>
+            <br>
+            <p>Y antes de seguir pensando que no eres capaz… quiero que te detengas un segundo y mires todo lo que ya superaste.</p>
+            <br>
+            <p>¿Recuerdas aquella etapa donde sentías que no ibas a salir de ese hueco?<br>
+            Cuando la lesión te hizo pensar que jamás volverías a ser la misma.<br>
+            Cuando te daba miedo no recuperar tu movilidad, perder parte de ti o sentir que todo aquello que amabas se estaba alejando.</p>
+            <br>
+            <p>Recuerdo lo mucho que te dolió. La frustración. El miedo. La impotencia de no poder hacer las cosas como antes.</p>
+            <br>
+            <p>But también recuerdo algo más importante: <span class="highlight">no te rendiste</span>.</p>
+            <br>
+            <p>Incluso en tus peores momentos seguiste intentando. Tal vez más lento, tal vez cansada, tal vez llorando a escondidas… pero seguiste. Y eso ya demuestra una fuerza enorme.</p>
+            <br>
+            <p>Porque muchas personas hablan de ser fuertes cuando todo va bien, pero la verdadera fuerza aparece cuando la vida te rompe los planes y aun así decides levantarte otra vez.</p>
+            <br>
+            <p>Y tú lo hiciste.</p>
+            <br>
+            <p>También hubo momentos donde las palabras de otras personas te afectaron más de lo que admitías. Te dijeron que habías cambiado, como si crecer, madurar o protegerte fuera algo malo. Y aunque dolió escucharlo, en el fondo sabías algo muy importante: nadie conoce realmente todas las batallas que has tenido que pelear para convertirte en quien eres hoy.</p>
+            <br>
+            <p>Cambiaste, sí. Pero cambiaste porque sobreviviste. Porque aprendiste. Porque creciste. Y eso jamás debería avergonzarles.</p>
+            <br>
+            <p>Ahora estás comenzando una nueva etapa y sé que muchas veces el cambio, la universidad, las responsabilidades y el miedo a no ser suficiente pueden hacerte sentir insegura. Ser primípara no es fácil; todo parece nuevo, exigente y a veces hasta abrumador.</p>
+            <br>
+            <p>Pero escucha esto con atención: no permitas que el miedo te haga olvidar todo lo que eres capaz de hacer.</p>
+            <br>
+            <p>No llegaste hasta aquí por suerte. Llegaste porque tienes disciplina, inteligencia, carácter y una capacidad impresionante para levantarte incluso cuando dudas de ti misma.</p>
+            <br>
+            <p>Habrá días difíciles, claro que sí. Habrá materias que te harán sentir perdida, momentos donde querrás rendirte o compararte con otras personas. Pero antes de hacerlo, recuerda algo muy importante:</p>
+            <br>
+            <p><span class="highlight">Tu única competencia eres tú misma.</span></p>
+            <br>
+            <p>No tienes que correr al ritmo de nadie más. No tienes que demostrarle nada al mundo. Tu verdadero reto está en seguir avanzando incluso en los días donde el camino se siente pesado.</p>
+            <br>
+            <p>Y honestamente, si algo queda claro después de todo lo que has vivido, es que eres muchísimo más fuerte de lo que crees.</p>
+            <br>
+            <p>Desde el primer momento fue evidente. Esa fuerza rara que tienes. Esa manera de seguir adelante incluso cuando todo parece complicarse. Esa capacidad de levantarte una y otra vez.</p>
+            <br>
+            <p>Eres una guerrera, aunque a veces se te olvide.</p>
+            <br>
+            <p>Así que hoy quiero que vuelvas a confiar en ti. Que levantes la cabeza. Que respires profundo. Y que recuerdes que ya sobreviviste cosas que pensaste que te destruirían.</p>
+            <br>
+            <p>Si pudiste con eso, también podrás con lo que viene ahora.</p>
+            <br>
+            <p>Paso a paso. Día a día. Sin rendirte.</p>
+            <br>
+            <p>Porque todavía te falta muchísimo por lograr… y créeme, tienes todo para conseguirlo.</p>
+        </div>
+
+        <div class="aesthetic-quote">
+            <p class="quote-text">"Y recuerda: aunque a veces sientas que el cielo se cae a tu alrededor, no te rindas jamás, porque para cada día... hay un nuevo día."</p>
+        </div>
+
+        <div class="divider"></div>
+        <div class="firma">Da lo mejor</div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('musica-fondo');
+        const icono = document.getElementById('icono-audio');
+        const pantalla = document.getElementById('pantalla-entrada');
+        
+        audio.volume = 0.5;
+
+        function comenzarExperiencia() {
+            pantalla.style.opacity = '0';
+            setTimeout(() => {
+                pantalla.style.visibility = 'hidden';
+            }, 1000);
+
+            audio.play().then(() => {
+                icono.textContent = '⏸';
+            }).catch(err => console.log("Error al reproducir el audio de fondo:", err));
+        }
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    icono.textContent = '⏸';
+                }).catch(err => console.log("Error al activar audio:", err));
+            } else {
+                audio.pause();
+                icono.textContent = '▶';
+            }
+        }
+
+        function cambiarVolumen(valor) {
+            audio.volume = valor;
+        }
+    </script>
+</body>
+</html>

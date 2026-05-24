@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Cartas de un Extraño</title>
+    <style>
+        :root {
+            --insta-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --rojo-regalo: #d32f2f;
+            --rojo-tapa: #f44336;
+            --dorado-moño: #ffd700;
+            --papel: #fdf5e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('fondo_completo_para_github.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; margin: 0; overflow-x: hidden;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 0;
+        }
+
+        /* --- PASOS --- */
+        .paso {
+            display: none; width: 100%; flex-direction: column; align-items: center;
+            position: relative; z-index: 10; animation: fadeIn 0.8s ease forwards;
+        }
+        .activo { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- PERGAMINO / DISCLAIMER --- */
+        .contenedor-instrucciones, .contenedor-disclaimer {
+            background: var(--papel); color: #2c1810; padding: 35px;
+            margin: 40px 20px; border-radius: 4px; max-width: 650px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid #d7ccc8;
+            line-height: 1.6; text-align: left;
+        }
+
+        .contenedor-instrucciones h3, .contenedor-disclaimer h3 {
+            margin-top: 0; color: #b71c1c; text-align: center;
+            font-family: 'Georgia', serif; border-bottom: 1px solid #d7ccc8;
+            padding-bottom: 10px; text-transform: uppercase;
+        }
+
+        .reglas-lista {
+            background: rgba(0,0,0,0.05); padding: 20px;
+            border-left: 4px solid #b71c1c; margin: 20px 0;
+            font-style: italic;
+        }
+
+        .btn-siguiente {
+            background: #b71c1c; color: white; border: none; padding: 15px 40px;
+            border-radius: 30px; font-weight: bold; cursor: pointer; 
+            margin-bottom: 50px; transition: 0.3s;
+        }
+
+        /* --- REGALO CON MOÑO --- */
+        .regalo-container {
+            position: relative; 
+            cursor: pointer; 
+            margin-top: 400px; 
+            margin-bottom: 100px;
+        }
+
+        @media (max-height: 800px) {
+            .regalo-container { margin-top: 300px; }
+        }
+
+        .caja {
+            width: 150px; height: 130px; background: var(--rojo-regalo);
+            border-radius: 0 0 8px 8px; position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+
+        .tapa {
+            position: absolute; top: -25px; left: -10px;
+            width: 170px; height: 30px; background: var(--rojo-tapa);
+            border-radius: 5px; z-index: 12; transition: 0.8s ease-in-out;
+        }
+
+        .moño-completo { position: absolute; top: 0; left: 0; width: 100%; transition: 0.8s ease-in-out; }
+
+        .moño-lazo {
+            position: absolute; top: -55px; left: 50%;
+            transform: translateX(-50%); width: 40px; height: 20px;
+            z-index: 15;
+        }
+
+        .moño-lazo::before, .moño-lazo::after {
+            content: ""; position: absolute; width: 45px; height: 45px;
+            border: 10px solid var(--dorado-moño); border-radius: 50% 50% 0 50%;
+            top: -20px;
+        }
+
+        .moño-lazo::before { transform: rotate(45deg); left: -40px; }
+        .moño-lazo::after { transform: rotate(135deg) scaleX(-1); right: -40px; }
+
+        .nudo {
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 30px; background: var(--dorado-moño);
+            border-radius: 50%; z-index: 16;
+        }
+
+        .etiqueta {
+            position: absolute; top: 40px; right: -110px;
+            background: #fff; color: #333; padding: 10px;
+            font-size: 0.7rem; font-weight: bold; transform: rotate(10deg);
+            border-left: 12px solid #e0cda9; width: 120px;
+        }
+
+        /* --- GRID CARTAS --- */
+        .grid-cartas {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px; width: 90%; max-width: 1000px; margin: 40px auto;
+        }
+
+        .opcion {
+            background: var(--papel); color: #4e342e; padding: 50px 20px 30px 20px;
+            border-radius: 4px; text-decoration: none; font-weight: bold;
+            text-align: center; position: relative; border: 1px solid #d7ccc8;
+            transition: 0.3s;
+        }
+
+        .opcion::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 35px;
+            background: #efebe9; clip-path: polygon(0 0, 50% 100%, 100% 0);
+        }
+
+        .opcion:hover { transform: translateY(-10px); background: #fff; }
+
+        .opcion:nth-child(1) { border-top: 5px solid #ff0000; } 
+        .opcion:nth-child(2) { border-top: 5px solid #3498db; } 
+        .opcion:nth-child(3) { border-top: 5px solid #4600c0; } 
+        .opcion:nth-child(4) { border-top: 5px solid #007625; } 
+        .opcion:nth-child(5) { border-top: 5px solid #e7d400; } 
+        .opcion:nth-child(6) { border-top: 5px solid #890000; } 
+
+        /* ESTILO ESPECÍFICO PARA EL DISCLAIMER DE CONCLUSIÓN */
+        .contenedor-disclaimer {
+            margin-top: 20px;
+            margin-bottom: 50px;
+            width: 90%;
+            max-width: 650px;
+            display: none; 
+            animation: fadeIn 1s ease forwards;
+            border-left: 5px solid #b71c1c;
+        }
+
+        .contenedor-disclaimer p {
+            margin-bottom: 15px;
+        }
+
+        footer { padding: 40px; z-index: 10; position: relative; }
+        .insta-link {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--insta-gradient); padding: 12px 25px;
+            border-radius: 30px; color: white; text-decoration: none; font-weight: bold;
+        }
+
+        /* --- MINI REPRODUCTOR DE MÚSICA CON VOLUMEN --- */
+        .reproductor-musica {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(253, 245, 230, 0.95);
+            padding: 10px 18px;
+            border-radius: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            border: 1px solid #d7ccc8;
+        }
+
+        .reproductor-musica span {
+            color: #2c1810;
+            font-size: 0.8rem;
+            font-weight: bold;
+            font-family: sans-serif;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-audio {
+            background: #b71c1c;
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-audio:hover {
+            background: #e53935;
+            transform: scale(1.05);
+        }
+
+        /* Control deslizante de volumen */
+        .control-volumen {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .slider-volumen {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 60px;
+            height: 5px;
+            background: #d7ccc8;
+            border-radius: 3px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .slider-volumen::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #b71c1c;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .slider-volumen::-webkit-slider-thumb:hover {
+            background: #e53935;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 600px) {
+            .reproductor-musica {
+                bottom: 20px;
+                left: 20px;
+                padding: 8px 14px;
+                gap: 8px;
+            }
+            .reproductor-musica span { display: none; }
+            .slider-volumen { width: 45px; } /* Un poquito más corto en pantallas pequeñas */
+        }
+    </style>
+</head>
+<body id="mainBody">
+
+    <div class="paso" id="paso1">
+        <div class="contenedor-instrucciones">
+            <h3>Introducción</h3>
+            <p>Hola, yo sé que esto debe tomarte por sorpresa, si soy sincer@ a mi también. En realidad no es que haya planeado esto con mucha anterioridad, a veces la vida es de corazonadas; cuando noté que tu cumpleaños estaba lo suficientemente cerca, me di cuenta que no quiero volver a pasar ese día por alto.</p>
+            <p>Cuando pienso en qué regalar por un cumpleaños hay demasiadas opciones, contigo incluso la luna estaba entre ellas, aunque debía ser realista. En primera, y espero lo hayas notado, no quiero que sepas quién soy; en segunda, quería darte algo que te acompañe siempre, que puedas recordar y que, cuando sientas que no puedes lidiar con todo sola, sepas que están mis palabras listas para hacerte todo más fácil.</p>
+            <p>La dinámica es muy sencilla: escribí 6 cartas (pudieron ser 9 lo sé), cada una para una situación en particular. Sé que las palabras muchas veces van a quedarse cortas para lo mucho que me gustaría apoyarte, pero es mi mejor intento por y para ti. Entonces cuando sientas que quieras leerlas van a estar ahí para ti. Además, la cuenta que creé en Instagram va a quedar para ti hasta el 9 de enero, aunque con ciertas reglas:</p>
+            <div class="reglas-lista">
+                • No te voy decir quién soy, sin importar cuánto preguntes.<br><br>
+                • No voy a contarte nada de mí y solo voy a estar para escucharte cuando sientas que las cartas no son suficientes y necesites a alguien.<br><br>
+                • Va a estar hasta el 9 de enero porque sé que quitarte más tiempo sería egoísta, más aún sabiendo que pronto vas a graduarte y va a empezar tu vida de verdad.
+            </div>
+            <p>Hay una carta que está bloqueada hasta tu graduación y para desbloquear la ultima carta tendras que leer todas las cartas con anterioridad; espero de verdad que te sirva para cada momento de este año.</p>
+        </div>
+        <button class="btn-siguiente" onclick="irAlRegalo()">Entiendo, continuar →</button>
+    </div>
+
+    <div class="paso" id="paso2">
+        <h2 style="margin-top: 50px; text-shadow: 2px 2px 10px black; text-align: center;">Tienes un nuevo paquete</h2>
+        <div class="regalo-container" onclick="abrirCartas()">
+            <div id="moñoEfecto" class="moño-completo">
+                <div class="moño-lazo"></div>
+                <div class="nudo"></div>
+            </div>
+            <div class="tapa" id="tapaRegalo"></div>
+            <div class="caja">
+                <div class="etiqueta">Para:<br>Danna Veronica Ciceri Duarte</div>
+            </div>
+        </div>
+        <p style="font-style: italic;">(Toca el regalo para abrirlo)</p>
+    </div>
+
+    <div class="paso" id="paso3">
+        <h2 style="margin-top: 30px; text-shadow: 2px 2px 10px black;">Tus Cartas</h2>
+        <div class="grid-cartas">
+            <a href="cumple.html" class="opcion" onclick="registrarLectura('cumple')">🎂 Feliz Cumpleaños</a>
+            <a href="mal.html" class="opcion" onclick="registrarLectura('mal')">💙 Cuando te sientas mal</a>
+            <a href="sola.html" class="opcion" onclick="registrarLectura('sola')">🌙 Cuando te sientas sola</a>
+            <a href="querer.html" class="opcion" onclick="registrarLectura('querer')">❤️ Cuánto te quiero</a>
+            <a href="disconforme.html" class="opcion" onclick="registrarLectura('fuerza')">✨ Cuando dudes de tu fuerza</a>
+            <a href="graduacion.html" class="opcion" onclick="registrarLectura('graduacion')">🎓 Para tu graduación</a>
+        </div>
+
+        <div class="contenedor-disclaimer" id="disclaimerConclusion">
+            <h3>Conclusión</h3>
+            <p>Y bueno… supongo que aquí terminan todas estas cartas.</p>
+            <p>Si llegaste hasta esta parte, entonces ya leíste cada palabra que alguien escribió pensando únicamente en ti. Probablemente algunas te hicieron reír, otras te dieron un poquito de fuerza y tal vez hubo una que llegó justo en el momento correcto. Esa era la idea desde el principio: acompañarte aunque fuera de esta manera tan extraña y anónima.</p>
+            <p>No sé qué vaya a pasar después de esto. La vida cambia demasiado rápido y tú estás a punto de empezar una etapa completamente nueva. Vas a conocer personas, lugares, versiones distintas de ti misma y momentos que todavía ni imaginas. Pero entre todo eso, espero que nunca olvides algo: eres muchísimo más fuerte, valiosa e increíble de lo que normalmente crees. Lo has demostrado una y otra vez, incluso cuando dudabas de ti.</p>
+            <p>Y aunque después del 9 de enero todo esto desaparezca, el cariño con el que fue hecho no lo hará. Porque hay personas que, sin importar el tiempo o la distancia, siempre van a desearte cosas bonitas en silencio. Así que gracias por existir de la manera en que lo haces, por cada recuerdo que dejaste y por permitir que alguien pudiera admirar tanto la persona que eres.</p>
+            <p>Espero que la vida te abrace bonito, que cumplas todos esos sueños que guardas y que algún día, cuando recuerdes estas cartas, sonrías aunque sea un poquito.</p>
+        </div>
+    </div>
+
+    <div class="reproductor-musica">
+        <span id="nombreCancionVis">🎵 Mi suerte</span>
+        <button class="btn-audio" id="btnPlayPause" onclick="togglePlay()">▶</button>
+        <button class="btn-audio" id="btnSkip" onclick="siguienteCancion()">⏭</button>
+        
+        <div class="control-volumen">
+            <span style="font-size: 0.75rem; margin: 0; padding: 0;">🔊</span>
+            <input type="range" class="slider-volumen" id="volumenSlider" min="0" max="1" step="0.05" value="0.7" oninput="ajustarVolumen(this.value)">
+        </div>
+    </div>
+
+    <footer>
+        <a href="https://instagram.com/sofia_caro_5535" target="_blank" class="insta-link">📸 Instagram</a>
+    </footer>
+
+    <script>
+        // --- CONFIGURACIÓN DE TU MIX DE CANCIONES ---
+        const listaCanciones = [
+            { archivo: 'mi_suerte.mp3', titulo: 'Mi suerte' },
+            { archivo: 'style.mp3', titulo: 'Style' },
+            { archivo: 'dembow_dany_o.mp3', titulo: 'Dembow' },
+            { archivo: 'matilda.mp3', titulo: 'Matilda' },
+            { archivo: 'alguien_como_tu.mp3', titulo: 'Alguien como tú' },
+            { archivo: 'vamonos_a_marte.mp3', titulo: 'Vámonos a marte' },
+            { archivo: 'ojitos_lindos.mp3', titulo: 'Ojitos lindos' },
+            { archivo: 'die_for_you.mp3', titulo: 'Die for you' },
+            { archivo: 'al_aire.mp3', titulo: 'Al aire' },
+            { archivo: 'amor_completo.mp3', titulo: 'Amor completo' }
+        ];
+        
+        let indiceCancionActual = 0;
+        const audio = new Audio(listaCanciones[indiceCancionActual].archivo);
+        
+        // Inicializamos el volumen por defecto al 70% para que no entre aturdiendo
+        audio.volume = 0.7;
+
+        audio.addEventListener('ended', () => {
+            siguienteCancion();
+        });
+
+        function togglePlay() {
+            const btn = document.getElementById('btnPlayPause');
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = "⏸";
+            } else {
+                audio.pause();
+                btn.innerText = "▶";
+            }
+        }
+
+        function siguienteCancion() {
+            indiceCancionActual = (indiceCancionActual + 1) % listaCanciones.length;
+            const estabaReproduciendo = !audio.paused;
+            
+            audio.src = listaCanciones[indiceCancionActual].archivo;
+            
+            // Mantenemos el volumen que el usuario haya elegido al cambiar de canción
+            audio.volume = document.getElementById('volumenSlider').value;
+            
+            document.getElementById('nombreCancionVis').innerText = "🎵 " + listaCanciones[indiceCancionActual].titulo;
+            
+            audio.play();
+            document.getElementById('btnPlayPause').innerText = "⏸";
+        }
+
+        // Nueva función para controlar el volumen dinámicamente
+        function ajustarVolumen(valor) {
+            audio.volume = valor;
+        }
+
+        // --- LÓGICA DE NAVEGACIÓN Y PROGRESO ---
+        window.onload = function() {
+            const yaLeido = sessionStorage.getItem('vistoEnSesion');
+            if (yaLeido) {
+                document.getElementById('paso3').classList.add('activo');
+            } else {
+                document.getElementById('paso1').classList.add('activo');
+            }
+            verificarProgresoCartas();
+        };
+
+        function irAlRegalo() {
+            document.getElementById('paso1').classList.remove('activo');
+            document.getElementById('paso2').classList.add('activo');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function abrirCartas() {
+            const tapa = document.getElementById('tapaRegalo');
+            const moño = document.getElementById('moñoEfecto');
+            
+            tapa.style.transform = "translateY(-250px) rotate(-15deg)";
+            moño.style.transform = "translateY(-300px) rotate(10deg)";
+            tapa.style.opacity = "0";
+            moño.style.opacity = "0";
+
+            setTimeout(() => {
+                sessionStorage.setItem('vistoEnSesion', 'true');
+                document.getElementById('paso2').classList.remove('activo');
+                document.getElementById('paso3').classList.add('activo');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 800);
+        }
+
+        function registrarLectura(nombreCarta) {
+            let leidas = JSON.parse(sessionStorage.getItem('cartasLeidas')) || {};
+            leidas[nombreCarta] = true;
+            sessionStorage.setItem('cartasLeidas', JSON.stringify(leidas));
+            verificarProgresoCartas();
+        }
+
+        function verificarProgresoCartas() {
+            const leidas = JSON.parse(sessionStorage.getItem('cartasLeidas')) || {};
+            const requisitos = ['cumple', 'mal', 'sola', 'querer', 'fuerza', 'graduacion'];
+            const todasLeidas = requisitos.every(carta => leidas[carta] === true);
+            
+            if (todasLeidas) {
+                document.getElementById('disclaimerConclusion').style.display = 'block';
+            } else {
+                document.getElementById('disclaimerConclusion').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

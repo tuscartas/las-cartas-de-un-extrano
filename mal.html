@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi poderosa Covey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body, html {
+            min-height: 100%; 
+            margin: 0;
+            padding: 0;
+            background-image: url('fondo-mal.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Degradado oscuro lateral */
+        .contenedor-lectura {
+            width: 100%;
+            min-height: 100vh; 
+            background: linear-gradient(to right, 
+                rgba(20, 10, 35, 0.88) 0%, 
+                rgba(20, 10, 35, 0.65) 50%, 
+                transparent 100%);
+            display: flex;
+            align-items: center;
+            padding-left: 5%;
+            padding-top: 40px;   
+            padding-bottom: 80px; /* Más espacio abajo para evitar choque con el botón en móviles */
+        }
+
+        .texto-carta {
+            max-width: 540px;
+            font-family: 'Caveat', cursive;
+            color: #ffffff; 
+            text-shadow: 
+                1px 1px 2px rgba(0, 0, 0, 0.8),
+                0px 0px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 3.4rem;
+            margin: 0 0 15px 0;
+            color: #e1bee7; 
+            line-height: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .mensaje-principal {
+            font-size: 1.65rem; 
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        .resaltado {
+            color: #03b2bb;
+            font-weight: 700;
+            text-shadow: 0px 0px 5px rgba(255, 213, 79, 0.3);
+        }
+
+        /* BOTÓN VOLVER - POSICIONADO A LA DERECHA DE LA PÁGINA */
+        .boton-volver {
+            position: fixed; /* Lo deja fijo en la pantalla aunque hagas scroll */
+            bottom: 40px;    /* Distancia desde abajo */
+            right: 40px;     /* Distancia desde la derecha de la página */
+            text-decoration: none;
+            color: white;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 0.85rem;
+            background: #6a1b9a;
+            padding: 12px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-shadow: none;
+            transition: 0.3s;
+            z-index: 1000; /* Asegura que siempre esté por encima de todo */
+        }
+
+        .boton-volver:hover {
+            background: #8e24aa;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
+
+        @media (max-width: 768px) {
+            .contenedor-lectura {
+                padding: 40px 20px;
+                background: linear-gradient(to bottom, 
+                    rgba(15, 5, 25, 0.95) 0%, 
+                    rgba(15, 5, 25, 0.85) 100%); 
+            }
+            .texto-carta { 
+                max-width: 100%; 
+            }
+            h2 { font-size: 3rem; }
+            .mensaje-principal { font-size: 1.45rem; }
+            
+            /* Ajuste para que el botón no tape texto en móviles pequeños */
+            .boton-volver {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-lectura">
+        <div class="texto-carta">
+            <h2>Hola…</h2>
+            <div class="mensaje-principal">
+                <p>Ven, cuéntame qué pasó esta vez, piensa que estoy junto a ti escuchándote.</p>
+                
+                <p>¿Fue uno de esos días en los que todo pesa demasiado? ¿De esos momentos donde sientes que el mundo va demasiado rápido y tú apenas estás intentando mantenerte en pie? Está bien sentirte así. No tienes que fingir que todo está perfecto todo el tiempo.</p>
+                
+                <p>Tal vez ahorita solo necesitas acostarte un rato, llorar un poco, comer esas gomitas de tirita que tanto te gustan o simplemente quedarte en silencio sin pensar en nada. Y aunque ahora mismo no te sientas como la mujer más poderosa del mundo, eso no significa que hayas dejado de serlo.</p>
+                
+                <p>Te conozco lo suficiente para saber que eres muy dura contigo misma. Te preocupas demasiado por cosas que no puedes controlar, cargas responsabilidades que no deberían recaer sólo sobre ti y, aun así, sigues intentando que todo salga bien para todos. Pero escucha esto con atención: <span class="resaltado">no todo es tu culpa</span>. Nunca lo ha sido. Eres maravillosa.</p>
+                
+                <p>A veces olvidas lo fuerte que eres porque te acostumbras a sobrevivir. Pero cada vez que crees que ya no puedes más, encuentras la manera de levantarte otra vez. Y eso no lo hace cualquiera.</p>
+                
+                <p>Tienes una <span class="resaltado">fuerza muy rara de encontrar</span>. De esas que no necesitan hacer ruido para ser enormes.</p>
+                
+                <p>Porque sí, tal vez mides 1.60, pero tu presencia llena cualquier lugar al que llegas. Tienes esa mirada decidida y hermosa, esa sonrisa capaz de darle calma a otros incluso cuando tú también la necesitas. Hay algo en ti que inspira, aunque muchas veces no te des cuenta.</p>
+                
+                <p>Y si el problema vuelve a ser la presión, las expectativas o ese miedo constante de no estar haciendo suficiente… respira. Estás haciendo lo mejor que puedes con todo lo que llevas encima. No tienes que demostrarle nada a nadie todo el tiempo.</p>
+                
+                <p><span class="resaltado">Descansar no te hace débil.</span><br>Dormir no significa rendirte.<br>Tomarte un momento para ver una película, escuchar música, comer algo rico o simplemente desconectarte un rato también es parte de vivir.</p>
+                
+                <p>No puedes seguir intentando salvarlo todo mientras te descuidas a ti misma.</p>
+                
+                <p>Quiero que recuerdes algo importante: la vida no se trata solo de cumplir, estudiar, responder, correr o aguantar. También se trata de esos pequeños momentos que parecen simples, pero terminan salvándonos sin que nos demos cuenta. Las risas inesperadas, como la tuya que sigue siendo una de mis favoritas, una canción favorita, una conversación tranquila, una siesta después de un día pesado, una comida que te gusta, un abrazo sincero… <span class="resaltado">ahí también vive la felicidad</span>.</p>
+                
+                <p>Y aunque hoy todo parezca difícil, esto también va a pasar.</p>
+                
+                <p>Así que, por favor, no te rindas ahora.</p>
+                
+                <p>Porque sí puedes. <span class="resaltado">Siempre has podido.</span></p>
+                
+                <p>Y cuando vuelvas a sentir que el cansancio te gana, que las dudas pesan demasiado o que ya no sabes cómo seguir… recuerda que nunca estás completamente sola. Siempre va a existir alguien dispuesto a recordarte lo valiosa, fuerte e increíble que eres, incluso en los días donde tú no logras verlo.</p>
+                
+                <p>Mañana probablemente volverás a levantarte con esa fuerza que tanto te caracteriza. Pero por hoy, solo descansa un poco. Tú también mereces cuidado, paciencia y amor.</p>
+                
+                <p>Y no lo olvides: incluso en tus peores días, sigues siendo una persona increíble.</p>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="boton-volver">← Volver a las cartas</a>
+
+</body>
+</html>
