@@ -148,6 +148,16 @@
         .opcion:nth-child(5) { border-top: 5px solid #e7d400; } 
         .opcion:nth-child(6) { border-top: 5px solid #890000; } 
 
+        /* Estilo visual opcional para cuando la carta de graduación está bloqueada por fecha */
+        .opcion.bloqueada-fecha {
+            opacity: 0.75;
+            cursor: not-allowed;
+        }
+        .opcion.bloqueada-fecha:hover {
+            transform: none;
+            background: var(--papel);
+        }
+
         /* ESTILO ESPECÍFICO PARA EL DISCLAIMER DE CONCLUSIÓN */
         .contenedor-disclaimer {
             margin-top: 20px;
@@ -217,7 +227,6 @@
             transform: scale(1.05);
         }
 
-        /* Control deslizante de volumen */
         .control-volumen {
             display: flex;
             align-items: center;
@@ -259,7 +268,7 @@
                 gap: 8px;
             }
             .reproductor-musica span { display: none; }
-            .slider-volumen { width: 45px; } /* Un poquito más corto en pantallas pequeñas */
+            .slider-volumen { width: 45px; }
         }
     </style>
 </head>
@@ -304,7 +313,7 @@
             <a href="sola.html" class="opcion" onclick="registrarLectura('sola')">🌙 Cuando te sientas sola</a>
             <a href="querer.html" class="opcion" onclick="registrarLectura('querer')">❤️ Cuánto te quiero</a>
             <a href="disconforme.html" class="opcion" onclick="registrarLectura('fuerza')">✨ Cuando dudes de tu fuerza</a>
-            <a href="graduacion.html" class="opcion" onclick="registrarLectura('graduacion')">🎓 Para tu graduación</a>
+            <a href="#" id="enlaceGraduacion" class="opcion" onclick="abrirCartaGraduacion(event)">🔒 Para tu graduación</a>
         </div>
 
         <div class="contenedor-disclaimer" id="disclaimerConclusion">
@@ -329,7 +338,7 @@
     </div>
 
     <footer>
-        <a href="https://instagram.com/sofia_caro_5535" target="_blank" class="insta-link">📸 Instagram</a>
+        <a href="https://instagram.com/entra_al_link__" target="_blank" class="insta-link">📸 Instagram</a>
     </footer>
 
     <script>
@@ -349,8 +358,6 @@
         
         let indiceCancionActual = 0;
         const audio = new Audio(listaCanciones[indiceCancionActual].archivo);
-        
-        // Inicializamos el volumen por defecto al 70% para que no entre aturdiendo
         audio.volume = 0.7;
 
         audio.addEventListener('ended', () => {
@@ -373,8 +380,6 @@
             const estabaReproduciendo = !audio.paused;
             
             audio.src = listaCanciones[indiceCancionActual].archivo;
-            
-            // Mantenemos el volumen que el usuario haya elegido al cambiar de canción
             audio.volume = document.getElementById('volumenSlider').value;
             
             document.getElementById('nombreCancionVis').innerText = "🎵 " + listaCanciones[indiceCancionActual].titulo;
@@ -383,9 +388,39 @@
             document.getElementById('btnPlayPause').innerText = "⏸";
         }
 
-        // Nueva función para controlar el volumen dinámicamente
         function ajustarVolumen(valor) {
             audio.volume = valor;
+        }
+
+        const fechaDesbloqueo = new Date('2026-11-20T00:00:00');
+
+        function verificarFechaGraduacion() {
+            const ahora = new Date();
+            const boton = document.getElementById('enlaceGraduacion');
+            
+            if (ahora < fechaDesbloqueo) {
+                boton.classList.add('bloqueada-fecha');
+                boton.innerHTML = "🔒 Para tu graduación";
+            } else {
+                boton.classList.remove('bloqueada-fecha');
+                boton.innerHTML = "🎓 Para tu graduación";
+            }
+        }
+
+        function abrirCartaGraduacion(event) {
+            event.preventDefault(); // Detiene el salto inmediato
+            const ahora = new Date();
+
+            if (ahora < fechaDesbloqueo) {
+                // Calcula la diferencia de tiempo en días
+                const diferenciaTiempo = fechaDesbloqueo - ahora;
+                const diasFaltantes = Math.ceil(diferenciaTiempo / (1000 * 60 * 60 * 24));
+                
+                alert(`Esta carta está guardada bajo llave hasta el día de tu graduación. Faltan ${diasFaltantes} días para que puedas abrirla. ✨`);
+            } else {
+                registrarLectura('graduacion');
+                window.location.href = "graduacion.html";
+            }
         }
 
         // --- LÓGICA DE NAVEGACIÓN Y PROGRESO ---
@@ -396,6 +431,7 @@
             } else {
                 document.getElementById('paso1').classList.add('activo');
             }
+            verificarFechaGraduacion();
             verificarProgresoCartas();
         };
 
