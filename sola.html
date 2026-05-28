@@ -84,6 +84,50 @@
         .boton-dibujo { background: #009688; }
         .boton:hover { transform: translateY(-3px); opacity: 0.9; }
 
+        /* --- ESTILOS INTERFAZ DE MÚSICA CONTROLES --- */
+        .reproductor-flotante {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 6, 51, 0.85);
+            padding: 10px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 110; /* Por encima de los modales para que pueda skipear mientras juega */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .btn-control {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-control:hover { transform: scale(1.1); color: #ffeb3b; }
+
+        .control-volumen {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .slider-volumen {
+            width: 60px;
+            cursor: pointer;
+            accent-color: #ec1568;
+        }
+
         /* --- ESTILOS MODALES --- */
         .modal {
             display: none;
@@ -109,7 +153,7 @@
             overflow-y: auto;
         }
 
-        /* Botón cerrar dentro de los modales (sin afectar el botón fijo de la página) */
+        /* Botón cerrar dentro de los modales */
         .boton-cerrar-modal {
             background: #ec1568;
             margin-top: 20px; 
@@ -158,16 +202,30 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
-            /* Ajuste del botón en móviles para que no estorbe tanto */
             .boton-volver {
                 bottom: 20px;
                 right: 20px;
                 padding: 10px 18px;
             }
+            .reproductor-flotante {
+                top: auto;
+                bottom: 20px;
+                left: 20px;
+                right: auto;
+            }
         }
     </style>
 </head>
 <body>
+
+    <div class="reproductor-flotante">
+        <button onclick="alternarReproduccion()" id="btn-play-pause" class="btn-control">🎵</button>
+        <button onclick="skipearCancion()" class="btn-control" title="Siguiente canción">⏭️</button>
+        <div class="control-volumen">
+            <span>🔊</span>
+            <input type="range" id="slider-volumen" class="slider-volumen" min="0" max="1" step="0.05" value="0.4" oninput="cambiarVolumen(this.value)">
+        </div>
+    </div>
 
     <div class="contenedor-lectura">
         <div class="texto-carta">
@@ -196,13 +254,13 @@
                 
                 <p>Pero aun así seguiste adelante. Y eso requiere muchísimo valor.</p>
                 
-                <p>Porque ser fuerte no significa nunca caer. Ser fuerte significa levantarte incluso después de sentirte derrotada. Significa seguir intentando aunque tengas miedo. Significa permitirte llorar y aun así continuar.</p>
+                <p>Subiendo de nivel o enfrentando lo que venga, eres una campeona.</p>
                 
                 <p>No tienes que demostrarle nada a nadie. No tienes que fingir que todo está perfecto. No tienes que convertirte en alguien “más fuerte” para merecer apoyo, cariño o comprensión.</p>
                 
                 <p>A veces está bien sentirse cansada. A veces está bien admitir que necesitas a alguien.</p>
                 
-                <p>Y cuando vuelvas a sentir ese vacío raro, esa sensación de soledad que aparece de repente aunque todo parezca normal, quiero que recuerdes esto:siempre habrá alguien dispuesto a escucharte, a quedarse y a recordarte lo valiosa que eres incluso en tus días más difíciles.</p>
+                <p>Y cuando vuelvas a sentir ese vacío raro, esa sensación de soledad que aparece de repente aunque todo parezca normal, quiero que recuerdes esto: siempre habrá alguien dispuesto a escucharte, a quedarse y a recordarte lo valiosa que eres incluso en tus días más difíciles.</p>
                 
                 <p>No estás sola en esto. Nunca lo has estado del todo.</p>
                 
@@ -222,7 +280,6 @@
 
     <a href="index.html" class="boton boton-volver">← Volver a las cartas</a>
 
-    <!-- MODAL JUEGO -->
     <div id="modalJuego" class="modal">
         <div class="modal-contenido">
             <h3 style="color: #311b92;">Para una campeona</h3>
@@ -233,7 +290,6 @@
         </div>
     </div>
 
-    <!-- MODAL DIBUJO -->
     <div id="modalDibujo" class="modal">
         <div class="modal-contenido">
             <h3 style="color: #009688;">Tu Espacio Creativo</h3>
@@ -357,6 +413,77 @@
         window.addEventListener('mouseup', () => dibujando = false); window.addEventListener('touchend', () => dibujando = false);
 
         generarSopa();
+
+        // --- SISTEMA MIX MUSICAL (MEJORADO CON CONTROLES) ---
+        const playlist = [
+            "audio/cancion1.mp3",
+            "audio/cancion2.mp3",
+            "audio/cancion3.mp3",
+            "audio/cancion4.mp3",
+            "audio/cancion5.mp3",
+            "audio/cancion6.mp3",
+            "audio/cancion7.mp3",
+            "audio/cancion8.mp3",
+            "audio/cancion9.mp3",
+            "audio/cancion10.mp3"
+        ];
+
+        // Mezclar la playlist al inicio (Shuffle)
+        playlist.sort(() => Math.random() - 0.5);
+
+        let currentTrackIndex = 0;
+        const audio = new Audio();
+        audio.volume = 0.4; 
+
+        function cargarYReproducir() {
+            if (currentTrackIndex >= playlist.length) {
+                currentTrackIndex = 0; 
+                playlist.sort(() => Math.random() - 0.5); 
+            }
+            audio.src = playlist[currentTrackIndex];
+            audio.play()
+                .then(() => actualizarIconoPlayPause(true))
+                .catch(err => console.log("Esperando interacción del usuario para reproducir audio."));
+        }
+
+        function alternarReproduccion() {
+            if (!audio.src) {
+                cargarYReproducir();
+            } else if (audio.paused) {
+                audio.play();
+                actualizarIconoPlayPause(true);
+            } else {
+                audio.pause();
+                actualizarIconoPlayPause(false);
+            }
+        }
+
+        function skipearCancion() {
+            currentTrackIndex++;
+            cargarYReproducir();
+        }
+
+        function cambiarVolumen(valor) {
+            audio.volume = valor;
+        }
+
+        function actualizarIconoPlayPause(isPlaying) {
+            const btn = document.getElementById('btn-play-pause');
+            btn.textContent = isPlaying ? "⏸️" : "▶️";
+        }
+
+        // Cuando la canción actual termina, pasa automáticamente a la siguiente
+        audio.addEventListener('ended', () => {
+            currentTrackIndex++;
+            cargarYReproducir();
+        });
+
+        // Activa la música automáticamente al hacer clic en cualquier parte de la página por primera vez
+        window.addEventListener('click', () => {
+            if (!audio.src) {
+                cargarYReproducir();
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
